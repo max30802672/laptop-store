@@ -8,11 +8,35 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; }
         header { background: #333; color: #fff; padding: 20px; font-size: 24px; }
         .container { padding: 20px; }
-        .product { margin: 40px 0; }
+        .filters { margin-bottom: 20px; }
+        .product { margin: 40px 0; display: block; }
         .gallery img { width: 300px; height: auto; margin: 5px; cursor: pointer; transition: transform 0.3s ease-in-out; }
         .gallery img:hover { transform: scale(3); }
         footer { background: #333; color: white; padding: 10px; margin-top: 20px; }
     </style>
+    <script>
+        function filterProducts() {
+            let processor = document.getElementById("processor").value.toLowerCase();
+            let diagonal = document.getElementById("diagonal").value.toLowerCase();
+            let minPrice = parseInt(document.getElementById("minPrice").value) || 0;
+            let maxPrice = parseInt(document.getElementById("maxPrice").value) || Infinity;
+            let products = document.querySelectorAll(".product");
+            
+            products.forEach(product => {
+                let productText = product.textContent.toLowerCase();
+                let priceText = product.querySelector("strong").textContent;
+                let price = parseInt(priceText.replace(/\D/g, ""));
+                
+                if ((processor === "all" || productText.includes(processor)) &&
+                    (diagonal === "all" || productText.includes(diagonal)) &&
+                    price >= minPrice && price <= maxPrice) {
+                    product.style.display = "block";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <header>Ноутбуки з Європи та Америки</header>
@@ -20,7 +44,33 @@
         <h2>Якісні ноутбуки за найкращими цінами</h2>
         <p>Гарантія 1 місяць.</p>
         
-        <div class="product">
+        <div class="filters">
+            
+          <label for="diagonal">Діагональ:</label>
+            <select id="diagonal" onchange="filterProducts()">
+                <option value="all">Будь-яка</option>
+                <option value="14">14"</option>
+                <option value="15.6">15.6"</option>
+            </select>
+          
+          <label for="processor">Процесор:</label>
+            <select id="processor" onchange="filterProducts()">
+                <option value="all">Будь-який</option>
+                <option value="i3">Intel Core i3</option>
+                <option value="i5">Intel Core i5</option>
+                <option value="i7">Intel Core i7</option>
+            </select>
+            
+            
+            
+            <label for="minPrice">Мін. ціна:</label>
+            <input type="number" id="minPrice" placeholder="Від" oninput="filterProducts()">
+            
+            <label for="maxPrice">Макс. ціна:</label>
+            <input type="number" id="maxPrice" placeholder="До" oninput="filterProducts()">
+        </div>
+        
+         <div class="product">
             <h3>Ноутбук HP EliteBook 840 G6</h3>
             <div class="gallery">
                 <img src="https://i.imgur.com/Xz0xtER.jpeg" alt="HP EliteBook 840 G6">
@@ -145,6 +195,8 @@
             <p>Ноутбук Dell Latitude 5420 14" IPS Intel Core i5-1145G7 2,6GHz 8MB (11nd) / 16 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® Iris® Xe Graphics / HDMI / WEB Camera</p>
             <strong>Ціна: 12100 грн.</strong>
         </div>
+    </div>
+
     </div>
     
     <footer>
