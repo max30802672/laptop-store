@@ -71,8 +71,80 @@
         }
     </script>
 </head>
+  <script>
+    function filterProducts() {
+        let brand = document.getElementById("brand").value.toLowerCase();
+        let diagonal = document.getElementById("diagonal").value;
+        let processor = document.getElementById("processor").value.toLowerCase();
+        let minPrice = parseInt(document.getElementById("minPrice").value) || 0;
+        let maxPrice = parseInt(document.getElementById("maxPrice").value) || Infinity;
+        let products = document.querySelectorAll(".product");
+
+        products.forEach(product => {
+            let text = product.textContent.toLowerCase();
+            let price = parseInt(product.querySelector("strong").textContent.replace(/\D/g, ""));
+
+            if ((brand === "all" || text.includes(brand)) &&
+                (diagonal === "all" || text.includes(diagonal)) &&
+                (processor === "all" || text.includes(processor)) &&
+                price >= minPrice && price <= maxPrice) {
+                product.style.display = "block";
+            } else {
+                product.style.display = "none";
+            }
+        });
+    }
+</script>
 <body>
     <header>Ноутбуки з Європи та Америки</header>
+    <div class="filters">
+        <label for="brand">Бренд:</label>
+        <select id="brand" onchange="filterProducts()">
+            <option value="all">Усі</option>
+            <option value="hp">HP</option>
+            <option value="dell">Dell</option>
+            <option value="lenovo">Lenovo</option>
+        </select>
+
+        <label for="diagonal">Діагональ:</label>
+        <select id="diagonal" onchange="filterProducts()">
+            <option value="all">Усі</option>
+            <option value="14">14"</option>
+            <option value="15.6">15.6"</option>
+        </select>
+
+        <label for="processor">Процесор:</label>
+        <select id="processor" onchange="filterProducts()">
+            <option value="all">Усі</option>
+            <option value="i3">Intel Core i3</option>
+            <option value="i5">Intel Core i5</option>
+            <option value="i7">Intel Core i7</option>
+        </select>
+
+        <label for="minPrice">Мін. ціна:</label>
+        <input type="number" id="minPrice" placeholder="Від" oninput="filterProducts()">
+
+        <label for="maxPrice">Макс. ціна:</label>
+        <input type="number" id="maxPrice" placeholder="До" oninput="filterProducts()">
+    </div> 
+
+    <style>
+        .filters {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .filters label {
+            margin-top: 5px;
+        }
+    </style>
     <div class="container">
         <h2>Якісні ноутбуки за найкращими цінами</h2>
         <p>Гарантія 1 місяць.</p>
@@ -298,3 +370,4 @@
     </footer>
 </body>
 </html>
+
