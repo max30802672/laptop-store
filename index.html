@@ -3,38 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ноутбуки з Америки</title>
+    <title>БУ-Ноутбуки з Америки</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; }
         header { background: #333; color: #fff; padding: 20px; font-size: 24px; }
         .container { padding: 20px; }
         .filters { margin-bottom: 20px; }
         .product { margin: 40px 0; display: block; }
-        .gallery img { width: 300px; height: auto; margin: 5px; cursor: pointer; transition: transform 0.3s ease-in-out; }
-        .gallery img:hover { transform: scale(3); }
-        footer { background: #333; color: white; padding: 10px; margin-top: 20px; }
+        .gallery { position: relative; max-width: 300px; margin: auto; cursor: pointer; }
+        .gallery img { width: 100%; height: auto; display: none; }
+        .gallery img:first-child { display: block; }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .prev { left: 0; }
+        .next { right: 0; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal img { max-width: 80%; max-height: 80%; display: block; }
+        .modal .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
     </style>
     <script>
-        function filterProducts() {
-            let processor = document.getElementById("processor").value.toLowerCase();
-            let diagonal = document.getElementById("diagonal").value.toLowerCase();
-            let minPrice = parseInt(document.getElementById("minPrice").value) || 0;
-            let maxPrice = parseInt(document.getElementById("maxPrice").value) || Infinity;
-            let products = document.querySelectorAll(".product");
-            
-            products.forEach(product => {
-                let productText = product.textContent.toLowerCase();
-                let priceText = product.querySelector("strong").textContent;
-                let price = parseInt(priceText.replace(/\D/g, ""));
-                
-                if ((processor === "all" || productText.includes(processor)) &&
-                    (diagonal === "all" || productText.includes(diagonal)) &&
-                    price >= minPrice && price <= maxPrice) {
-                    product.style.display = "block";
-                } else {
-                    product.style.display = "none";
-                }
-            });
+        let modalImages = [];
+        let currentModalIndex = 0;
+        
+        function openModal(event, productId) {
+            event.stopPropagation();
+            let modal = document.getElementById("modal");
+            let modalImg = document.getElementById("modal-img");
+            modalImages = Array.from(document.querySelectorAll(`#${productId} .gallery img`)).map(img => img.src);
+            currentModalIndex = 0;
+            modalImg.src = modalImages[currentModalIndex];
+            modal.style.display = "flex";
+        }
+        
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+        
+        function changeModalImage(step) {
+            currentModalIndex = (currentModalIndex + step + modalImages.length) % modalImages.length;
+            document.getElementById("modal-img").src = modalImages[currentModalIndex];
         }
     </script>
 </head>
@@ -44,199 +77,224 @@
         <h2>Якісні ноутбуки за найкращими цінами</h2>
         <p>Гарантія 1 місяць.</p>
         
-        <div class="filters">
-            
-          <label for="diagonal">Діагональ:</label>
-            <select id="diagonal" onchange="filterProducts()">
-                <option value="all">Будь-яка</option>
-                <option value="14">14"</option>
-                <option value="15.6">15.6"</option>
-            </select>
-          
-          <label for="processor">Процесор:</label>
-            <select id="processor" onchange="filterProducts()">
-                <option value="all">Будь-який</option>
-                <option value="i3">Intel Core i3</option>
-                <option value="i5">Intel Core i5</option>
-                <option value="i7">Intel Core i7</option>
-            </select>
-            
-            
-            
-            <label for="minPrice">Мін. ціна:</label>
-            <input type="number" id="minPrice" placeholder="Від" oninput="filterProducts()">
-            
-            <label for="maxPrice">Макс. ціна:</label>
-            <input type="number" id="maxPrice" placeholder="До" oninput="filterProducts()">
-        </div>
-
-        <div class="product">
-            <h3>Ноутбук HP EliteBook 840 G4</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/VrVs9li.jpeg" alt="HP EliteBook 840 G4">
-            </div>
-            <p>Ноутбук HP EliteBook 840 G4 14 Intel Core i5-7200U 3100MHz 3Mb (7 gen) 8 Gb DDR4 / SSD 128GB M2 / 1366x768 WXGA LED 16:9 / Intel HD Graphics 620 / DisplayPort / WEB Camera</p>
-            <strong>Ціна: 6500 грн.</strong>
-        </div>
-        
-         <div class="product">
-            <h3>Ноутбук HP EliteBook 840 G6</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/Xz0xtER.jpeg" alt="HP EliteBook 840 G6">
-            </div>
-            <p>Ноутбук HP EliteBook 840 G6 14" IPS Intel Core i5-8365U 1600MHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 1920x1080 Full HD Intel® UHD 620 HDMI WEB Camera</p>
-            <strong>Ціна: 8600 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук HP ZBOOK 14U G5</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/12JhKx9.jpeg" alt="HP ZBOOK 14U G5">
-            </div>
-            <p>Ноутбук HP ZBOOK 14U G5 14" IPS Intel Core i5-8350U 1700MHz 6MB (8 gen) / 16 Gb DDR4 / SSD 240 Gb M2 1920x1080 Full HD Intel® UHD 620 HDMI WEB Camera </p>
-            <strong>Ціна: 9600 грн.</strong>
-        </div>     
-        
-       <div class="product">
-            <h3>Ноутбук HP ProBook 440 G7</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/k8pfzfb.jpeg" alt="HP ProBook 440 G7">
-            </div>
-            <p>Ноутбук HP ProBook 440 G7 14" IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 16 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® UHD 10th Generation / HDMI / WEB Camera</p>
-            <strong>Ціна: 11200 грн.</strong>
-        </div>     
-
-         <div class="product">
-            <h3>Ноутбук HP ProBook 450 G5</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/wBKiaCe.jpeg" alt="HP ProBook 450 G5">
-            </div>
-            <p>Ноутбук HP ProBook 450 G5 15.6" IPS Intel Core i5-8250U 1,6-3,4GHz 6MB (8 gen) / 8 Gb DDR4 / SSD 120GB м2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
-            <strong>Ціна: 8700 грн.</strong>
-        </div>     
-        
-       <div class="product">
-            <h3>Ноутбук Lenovo ThinkPad L480</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/IYvfmxq.jpeg" alt="Lenovo ThinkPad L480">
-            </div>
-            <p>Ноутбук Lenovo ThinkPad L480 14" Touchscreen IPS Intel Core i3-8130U 2.2 GHz-3.4GHz 4MB (8 gen) / 8 Gb DDR4 / SSD 128 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
-            <strong>Ціна: 5700 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Lenovo ThinkPad E580</h3>
-            <div class="gallery">
+        <div class="product" id="product1">
+            <h3>Lenovo ThinkPad E580</h3>
+            <div class="gallery" onclick="openModal(event, 'product1')">
                 <img src="https://i.imgur.com/C8upA0J.jpeg" alt="Lenovo ThinkPad E580">
+                <img src="https://i.imgur.com/bcdgLnD.jpeg" alt="Lenovo ThinkPad E580">
+                <img src="https://i.imgur.com/OcjCouZ.jpeg" alt="Lenovo ThinkPad E580">
+                <img src="https://i.imgur.com/OgxuvsO.jpeg" alt="Lenovo ThinkPad E580 - вид сбоку">
             </div>
             <p>Ноутбук Lenovo Thinkpad E580 15.6 IPS Intel Core i7-8550U 1800MHz 8MB (8 gen) / 8 Gb DDR4 / SSD 240 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
             <strong>Ціна: 10600 грн.</strong>
         </div>
-        
-      <div class="product">
-            <h3>Ноутбук Dell Latitude 5400</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/DPLhJC2.jpeg" alt="Dell Latitude 5400">
+  
+        <div class="product" id="product2">
+            <h3>Lenovo ThinkPad L480</h3>
+            <div class="gallery" onclick="openModal(event, 'product2')">
+                <img src="https://i.imgur.com/IYvfmxq.jpeg" alt="Lenovo ThinkPad L480">
+                <img src="https://i.imgur.com/Z5SwaDa.jpeg" alt="Lenovo ThinkPad L480">
+                <img src="https://i.imgur.com/6l67o2K.jpeg" alt="Lenovo ThinkPad L480">
+                <img src="https://i.imgur.com/6veihxk.jpeg" alt="Lenovo ThinkPad L480 - вид сбоку">
+            </div>
+            <p>Ноутбук Lenovo ThinkPad L480 14" Touchscreen IPS Intel Core i3-8130U 2.2 GHz-3.4GHz 4MB (8 gen) / 8 Gb DDR4 / SSD 128 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
+            <strong>Ціна: 5700 грн.</strong>
+        </div>
+
+        <div class="product" id="product8">
+            <h3>Lenovo ThinkPad E14</h3>
+            <div class="gallery" onclick="openModal(event, 'product8')">
+                <img src="https://i.imgur.com/cxDjhw6.jpeg" alt="Lenovo ThinkPad E14">
+                <img src="https://i.imgur.com/5pJziZs.jpeg" alt="Lenovo ThinkPad E14">
+                <img src="https://i.imgur.com/rNmwjYt.jpeg" alt="Lenovo ThinkPad E14">
+                <img src="https://i.imgur.com/01du8Cx.jpeg" alt="Lenovo ThinkPad E14 - вид сбоку">
+            </div>
+            <p>Ноутбук Lenovo ThinkPad E14 14" IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 16 Gb DDR4 / SSD 240GB M2 / 1920x1080 Full HD / Intel® UHD 10th Generation / HDMI / WEB Camera</p>
+            <strong>Ціна: 10300 грн.</strong>
+        </div>
+      
+        <div class="product" id="product7">
+            <h3>HP EliteBook 840 G4</h3>
+            <div class="gallery" onclick="openModal(event, 'product7')">
+                <img src="https://i.imgur.com/ftDcSEM.jpeg" alt="HP EliteBook 840 G4">
+                <img src="https://i.imgur.com/UjRSicz.jpeg" alt="HP EliteBook 840 G4">
+                <img src="https://i.imgur.com/4F9EGkD.jpeg" alt="HP EliteBook 840 G4">
+                <img src="https://i.imgur.com/Wnbt0yS.jpeg" alt="HP EliteBook 840 G4 - вид сбоку">
+            </div>
+            <p>Ноутбук HP EliteBook 840 G4 14 Intel Core i5-7200U 3100MHz 3Mb (7 gen) 8 Gb DDR4 / SSD 256GB M2 / 1366x768 WXGA LED 16:9 / Intel HD Graphics 620 / DisplayPort / WEB Camera</p>
+            <strong>Ціна: 6500 грн.</strong>
+        </div>  
+      
+        <div class="product" id="product3">
+            <h3>HP EliteBook 840 G6</h3>
+            <div class="gallery" onclick="openModal(event, 'product3')">
+                <img src="https://i.imgur.com/Y6yAaFv.jpeg" alt="HP EliteBook 840 G6">
+                <img src="https://i.imgur.com/uuZlnAv.jpeg" alt="HP EliteBook 840 G6">
+                <img src="https://i.imgur.com/V178ojV.jpeg" alt="HP EliteBook 840 G6">
+                <img src="https://i.imgur.com/Tpk11Lu.jpeg" alt="HP EliteBook 840 G6 - вид сбоку">
+            </div>
+            <p>Ноутбук HP EliteBook 840 G6 14" IPS Intel Core i5-8365U 1600MHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 1920x1080 Full HD Intel® UHD 620 HDMI WEB Camera</p>
+            <strong>Ціна: 8600 грн.</strong>
+        </div>
+
+        <div class="product" id="product4">
+            <h3>HP ZBOOK 14U G5</h3>
+            <div class="gallery" onclick="openModal(event, 'product4')">
+                <img src="https://i.imgur.com/KrH3jvO.jpeg" alt="HP ZBOOK 14U G5">
+                <img src="https://i.imgur.com/QUkq7UW.jpeg" alt="HP ZBOOK 14U G5">
+                <img src="https://i.imgur.com/hiQtox4.jpeg" alt="HP ZBOOK 14U G5">
+                <img src="https://i.imgur.com/lRY8DRK.jpeg" alt="HP ZBOOK 14U G5 - вид сбоку">
+            </div>
+            <p>Ноутбук HP ZBOOK 14U G5 14" IPS Intel Core i5-8350U 1700MHz 6MB (8 gen) / 16 Gb DDR4 / SSD 240 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
+            <strong>Ціна: 9600 грн.</strong>
+        </div>
+
+        <div class="product" id="product5">
+            <h3>HP ProBook 440 G7</h3>
+            <div class="gallery" onclick="openModal(event, 'product5')">
+                <img src="https://i.imgur.com/KQs95Bk.jpeg" alt="HP ProBook 440 G7">
+                <img src="https://i.imgur.com/o90gvYy.jpeg" alt="HP ProBook 440 G7">
+                <img src="https://i.imgur.com/NrW6r8w.jpeg" alt="HP ProBook 440 G7">
+                <img src="https://i.imgur.com/x8tC2cl.jpeg" alt="HP ProBook 440 G7 - вид сбоку">
+            </div>
+            <p>Ноутбук HP ProBook 440 G7 14" IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 16 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® UHD 10th Generation / HDMI / WEB Camera</p>
+            <strong>Ціна: 11200 грн.</strong>
+        </div>  
+
+        <div class="product" id="product6">
+            <h3>HP ProBook 450 G5</h3>
+            <div class="gallery" onclick="openModal(event, 'product6')">
+                <img src="https://i.imgur.com/8v5Idhq.jpeg" alt="HP ProBook 450 G5">
+                <img src="https://i.imgur.com/bAznYtT.jpeg" alt="HP ProBook 450 G5">
+                <img src="https://i.imgur.com/sKzGGwA.jpeg" alt="HP ProBook 450 G5">
+                <img src="https://i.imgur.com/a2TC20x.jpeg" alt="HP ProBook 450 G5 - вид сбоку">
+            </div>
+            <p>Ноутбук HP ProBook 450 G5 15.6" IPS Intel Core i5-8250U 1,6-3,4GHz 6MB (8 gen) / 8 Gb DDR4 / SSD 128GB м2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
+            <strong>Ціна: 8700 грн.</strong>
+        </div>  
+
+        <div class="product" id="product9">
+            <h3>Dell Latitude 5400</h3>
+            <div class="gallery" onclick="openModal(event, 'product9')">
+                <img src="https://i.imgur.com/wzjiQbS.jpeg" alt="Dell Latitude 5400">
+                <img src="https://i.imgur.com/r1pB8RS.jpeg" alt="Dell Latitude 5400">
+                <img src="https://i.imgur.com/fVlGakK.jpeg" alt="Dell Latitude 5400">
+                <img src="https://i.imgur.com/XDhFm6o.jpeg" alt="Dell Latitude 5400 - вид сбоку">
             </div>
             <p>Ноутбук Dell Latitude 5400 Touchscreen 14" IPS Intel Core i5-8365U 1600MHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
             <strong>Ціна: 8100 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Dell Latitude 5490</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/ySordVb.jpeg" alt="Dell Latitude 5490">
-            </div>
-            <p>Ноутбук Dell Latitude 5490 14" IPS Intel Core i7-8650U 1.9GHz-4.2GHz 8MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera </p>
-            <strong>Ціна: 8500 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Dell Latitude 5580</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/mCnyszk.jpeg" alt="Dell Latitude 5580">
-            </div>
-            <p>Ноутбук Dell Latitude 5580 15.6 IPS Intel Core i7-7820HQ 3900MHz 8MB (7nd) / 16 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / NVIDIA Geforce 940MX / HDMI / WEB Camera</p>
-            <strong>Ціна: 10900 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Dell Latitude 5500</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/0t1Oslp.jpeg" alt="Dell Latitude 5500">
-            </div>
-            <p>Ноутбук Dell Latitude 5500 Touchscreen 15,6" IPS Intel Core i5-8365U 1600MHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
-            <strong>Ціна: 9200 грн.</strong>
-        </div>
+        </div>  
 
-       <div class="product">
-            <h3>Ноутбук Dell Latitude 5590</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/Rr5dkCp.jpeg" alt="Dell Latitude 5590">
+        <div class="product" id="product10">
+            <h3>Dell Latitude 5410</h3>
+            <div class="gallery" onclick="openModal(event, 'product10')">
+                <img src="https://i.imgur.com/upyYYch.jpeg" alt="Dell Latitude 5410">
+                <img src="https://i.imgur.com/Ygth4NE.jpeg" alt="Dell Latitude 5410">
+                <img src="https://i.imgur.com/bGiuDpJ.jpeg" alt="Dell Latitude 5410">
+                <img src="https://i.imgur.com/EjNY038.jpeg" alt="Dell Latitude 5410 - вид сбоку">
+            </div>
+            <p>Ноутбук Dell Latitude 5410 14 IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 16 Gb DDR4 / SSD 512GB M2 / 1920x1080 Full HD / Intel® UHD 10th Generation / HDMI / WEB Camera</p>
+            <strong>Ціна: 11000 грн.</strong>
+        </div>  
+
+        <div class="product" id="product11">
+            <h3>Dell Latitude 5420</h3>
+            <div class="gallery" onclick="openModal(event, 'product11')">
+                <img src="https://i.imgur.com/yUH432a.jpeg" alt="Dell Latitude 5420">
+                <img src="https://i.imgur.com/yWFgvCO.jpeg" alt="Dell Latitude 5420">
+                <img src="https://i.imgur.com/9wDtkB0.jpeg" alt="Dell Latitude 5420">
+                <img src="https://i.imgur.com/BTcXCgj.jpeg" alt="Dell Latitude 5420 - вид сбоку">
+            </div>
+            <p>Ноутбук Dell Latitude 5420 14" IPS Intel Core i5-1145G7 2,6GHz 8MB (11nd) / 16 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® Iris® Xe Graphics / HDMI / WEB Camera</p>
+            <strong>Ціна: 12000 грн.</strong>
+        </div>  
+
+         <div class="product" id="product12">
+            <h3>Dell Latitude 5580</h3>
+            <div class="gallery" onclick="openModal(event, 'product12')">
+                <img src="https://i.imgur.com/YmZs4IT.jpeg" alt="Dell Latitude 5580">
+                <img src="https://i.imgur.com/J9ytWyb.jpeg" alt="Dell Latitude 5580">
+                <img src="https://i.imgur.com/rR7WoMx.jpeg" alt="Dell Latitude 5580">
+                <img src="https://i.imgur.com/MwMkGED.jpeg" alt="Dell Latitude 5580 - вид сбоку">
+            </div>
+            <p>Ноутбук Dell Latitude 5580 15.6" IPS Intel Core i7-7820HQ 3900MHz 8MB (7nd) / 16 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / NVIDIA Geforse 940MX / HDMI / WEB Camera </p>
+            <strong>Ціна: 10900 грн.</strong>
+        </div>  
+
+        <div class="product" id="product13">
+            <h3>Dell Precision 7520</h3>
+            <div class="gallery" onclick="openModal(event, 'product13')">
+                <img src="https://i.imgur.com/WUmHRIu.jpeg" alt="Dell Precision 7520">
+                <img src="https://i.imgur.com/hIF3sTU.jpeg" alt="Dell Precision 7520">
+                <img src="https://i.imgur.com/eKwK59j.jpeg" alt="Dell Precision 7520">
+                <img src="https://i.imgur.com/icOPgw8.jpeg" alt="Dell Precision 7520 - вид сбоку">
+            </div>
+            <p>Ноутбук Dell Precision 7520 15.6 IPS Intel Core i7-7700HQ 2.80GHz 6MB (7nd) / 16 Gb DDR4 / SSD 512GB M2 / 1920x1080 Full HD / Radeon Pro WX 4150 4GB / HDMI / NO WEB Camera </p>
+            <strong>Ціна: 12300 грн.</strong>
+        </div>  
+
+        <div class="product" id="product14">
+            <h3>Dell Latitude 5590</h3>
+            <div class="gallery" onclick="openModal(event, 'product14')">
+                <img src="https://i.imgur.com/5MskAoK.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/ZAo4nYc.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/L8QJHSL.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/f9rXr4A.jpeg" alt="Dell Latitude 5590 - вид сбоку">
             </div>
             <p>Ноутбук Dell Latitude 5590 15.6" IPS Intel Core i5-8250U 1,6-3,4GHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256Gb M2 / 1920x1080 Full HD / Intel HD Graphics 620 / HDMI / WEB Camera</p>
             <strong>Ціна: 8900 грн.</strong>
-        </div>
+        </div>  
 
-         <div class="product">
-            <h3>Ноутбук Dell Latitude 5590</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/nC9BOzV.jpeg" alt="Dell Latitude 5590">
+         <div class="product" id="product15">
+            <h3>Dell Latitude 5500</h3>
+            <div class="gallery" onclick="openModal(event, 'product15')">
+                <img src="https://i.imgur.com/p7oNW3B.jpeg" alt="Dell Latitude 5500">
+                <img src="https://i.imgur.com/gQ2okfy.jpeg" alt="Dell Latitude 5500">
+                <img src="https://i.imgur.com/Ayi4yca.jpeg" alt="Dell Latitude 5500">
+                <img src="https://i.imgur.com/jUgPbSf.jpeg" alt="Dell Latitude 5500 - вид сбоку">
             </div>
-            <p>Ноутбук Dell Latitude 5590 15.6" IPS Intel Core i5-8250U 1,6-3,4GHz 6MB (8 gen) / 16 Gb DDR4 / SSD 256Gb M2 / 1920x1080 Full HD / Intel HD Graphics 620 / HDMI / WEB Camera</p>
-            <strong>Ціна: 9400 грн.</strong>
-        </div>
+            <p>Ноутбук Dell Latitude 5500 Touchscreen 15,6" IPS Intel Core i5-8365U 1600MHz 6MB (8 gen) / 8 Gb DDR4 / SSD 256 Gb M2 / 1920x1080 Full HD / Intel® UHD 620 / HDMI / WEB Camera</p>
+            <strong>Ціна: 9200 грн.</strong>
+        </div>  
 
-         <div class="product">
-            <h3>Ноутбук Dell Latitude 5590</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/xwIVUGa.jpeg" alt="Dell Latitude 5590">
+        <div class="product" id="product16">
+            <h3>Dell Latitude 5590</h3>
+            <div class="gallery" onclick="openModal(event, 'product16')">
+                <img src="https://i.imgur.com/C3g8Uqx.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/au7vhCD.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/OS0uXrb.jpeg" alt="Dell Latitude 5590">
+                <img src="https://i.imgur.com/ldPNYwk.jpeg" alt="Dell Latitude 5590 - вид сбоку">
             </div>
-            <p>Ноутбук Dell Latitude 5590 15.6 IPS Intel Core i7-8650U 1.90GHZ-4,20GHZ 8MB (8 gen) / 16 Gb DDR4 / SSD 256Gb M2 / 1920x1080 Full HD / Nvidia GeForce MX130 / HDMI /  WEB Camera </p>
+            <p>Ноутбук Dell Latitude 5590 15.6 IPS Intel Core i7-8650U 1.90GHZ-4,20GHZ 8MB (8 gen) / 16 Gb DDR4 / SSD 256Gb M2 / 1920x1080 Full HD / Nvidia GeForce MX130 / HDMI / WEB Camera</p>
             <strong>Ціна: 11300 грн.</strong>
-        </div>
-        
-         <div class="product">
-            <h3>Ноутбук Dell Latitude 5510</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/IUBOvu4.jpeg" alt="Dell Latitude 5510">
-            </div>
-            <p>Ноутбук Dell Latitude 5510 15.6" IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 8 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® UHD Graphics / HDMI / WEB Camera Bios lock</p>
-            <strong>Ціна: 9000 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Dell Latitude 5410</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/7gUDMEp.jpeg" alt="Dell Latitude 5410">
-            </div>
-            <p>Ноутбу Dell Latitude 5410 14 IPS Intel Core i5 10210U 1,6GHz-4,2GHz 6MB (10nd) / 8 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD Intel® UHD 10th Generation / HDMI / WEB Camera</p>
-            <strong>Ціна: 10200 грн.</strong>
-        </div>
-        
-      <div class="product">
-            <h3>Ноутбук Dell Precision 7520</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/dHn8PHT.jpeg" alt="Dell Precision 7520">
-            </div>
-            <p>Ноутбук Dell Precision 7520 15.6 IPS Intel Core i7-7700HQ 2.80GHz 6MB (7nd) 16 Gb DDR4 / SSD 512 GB m2 / 1920x1080 Full HD / Radeon Pro WX 4150 4GB GDDR5 / HDMI /  NO WEB Camera </p>
-            <strong>Ціна: 11900 грн.</strong>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук Dell Latitude 5420</h3>
-            <div class="gallery">
-                <img src="https://i.imgur.com/tF3CRIG.jpeg" alt="Dell Latitude 5420">
-            </div>
-            <p>Ноутбук Dell Latitude 5420 14" IPS Intel Core i5-1145G7 2,6GHz 8MB (11nd) / 16 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® Iris® Xe Graphics / HDMI / WEB Camera</p>
-            <strong>Ціна: 12100 грн.</strong>
-        </div>
-    </div>
+        </div>    
 
+        <div class="product" id="product17">
+            <h3>Dell Latitude 5510</h3>
+            <div class="gallery" onclick="openModal(event, 'product17')">
+                <img src="https://i.imgur.com/r51CquL.jpeg" alt="Dell Latitude 5510">
+                <img src="https://i.imgur.com/InmU3Ju.jpeg" alt="Dell Latitude 5510">
+                <img src="https://i.imgur.com/kAcNFmk.jpeg" alt="Dell Latitude 5510">
+                <img src="https://i.imgur.com/Idm22Nk.jpeg" alt="Dell Latitude 5510 - вид сбоку">
+            </div>
+            <p>Ноутбук Dell Latitude 5510 15.6" IPS Intel Core i5-10210U 1,6GHz-4,2GHz 6MB (10nd) / 8 Gb DDR4 / SSD 256GB M2 / 1920x1080 Full HD / Intel® UHD Graphics / HDMI / WEB Camera (Bios Lock)</p>
+            <strong>Ціна: 9000 грн.</strong>
+        </div>    
+      
+       </div>
+  
+
+    
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <span id="modal-prev" class="prev" onclick="changeModalImage(-1)">&#10094;</span>
+        <img id="modal-img" src="">
+        <span id="modal-next" class="next" onclick="changeModalImage(1)">&#10095;</span>
     </div>
     
     <footer>
         <p>Телефон: +380672840408 | <a href="viber://chat?number=+380672840408" target="_blank">Viber</a></p>
+        <p>Email: max30802672@gmail.com</p>
     </footer>
 </body>
 </html>
